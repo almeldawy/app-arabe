@@ -56,7 +56,6 @@
             box-sizing: border-box; outline: none; margin-top: 15px;
         }
 
-        /* CARTE AGRANDIE (55% de la hauteur) */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
             height: 55vh; min-height: 320px; margin: 10px 0; 
@@ -95,28 +94,14 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* STYLE PREMIUM POUR LE BOUTON MIX */
         .btn-mix {
-            padding: 10px 20px;
-            border-radius: 30px;
-            background: rgba(251, 191, 36, 0.1); /* Fond doré translucide */
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 10px 20px; border-radius: 30px;
+            background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); font-size: 13px; font-weight: 800;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
         }
-        .btn-mix:active {
-            background: var(--accent);
-            color: #000;
-            transform: scale(0.95);
-        }
+        .btn-mix:active { background: var(--accent); color: #000; transform: scale(0.95); }
 
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
@@ -147,7 +132,7 @@
         <div id="count">0 / 0</div>
         <div class="controls">
             <button class="btn-circle" onclick="change(-1)">⬅️</button>
-            <button class="btn-mix" onclick="melanger()"><span>🔀</span> MIX</button>
+            <button class="btn-mix" onclick="melanger()">🔀 MIX</button>
             <button class="btn-circle" onclick="change(1)">➡️</button>
         </div>
     </div>
@@ -155,6 +140,14 @@
     <script src="donnees.js"></script>
 
     <script>
+        // --- GESTION DU SERVICE WORKER (MODE HORS-LIGNE) ---
+        if ('serviceWorker' in navigator) {
+            const version = new Date().getTime(); 
+            navigator.serviceWorker.register('sw.js?v=' + version)
+                .then(() => console.log("Application prête pour le mode hors-ligne !"))
+                .catch(err => console.log("Erreur SW:", err));
+        }
+
         let index = 0;
         let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
@@ -180,14 +173,11 @@
 
         function tourner() { document.getElementById('card').classList.toggle('flipped'); }
         function change(dir) { index = (index + dir + liste.length) % liste.length; MAJ(); }
+        
         function melanger() { 
             liste.sort(() => Math.random() - 0.5); 
             index = 0; 
             MAJ(); 
-            // Petit effet visuel pour confirmer le mélange
-            const btn = document.querySelector('.btn-mix');
-            btn.style.transform = "scale(0.9)";
-            setTimeout(() => btn.style.transform = "scale(1)", 100);
         }
         
         function toggleFavori(e) {
@@ -203,13 +193,9 @@
         function toggleTheme() {
             const body = document.body;
             const icon = document.getElementById('theme-icon');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                icon.textContent = '☀️';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                icon.textContent = '🌙';
-            }
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            icon.textContent = isDark ? '☀️' : '🌙';
         }
 
         function filtrer() {
