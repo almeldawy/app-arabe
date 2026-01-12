@@ -34,44 +34,45 @@
             color: var(--text-main); 
             display: flex; flex-direction: column; align-items: center; 
             justify-content: space-between;
-            padding: 0 15px 30px 15px; /* On ajuste les marges */
+            padding: 0 10px 25px 10px; 
             box-sizing: border-box;
             touch-action: none;
         }
 
-        /* Barre de progression tout en haut */
+        /* Barre de progression laser tout en haut */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
             background: rgba(128,128,128,0.1); z-index: 1001;
         }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: 0.5s; }
 
-        /* Barre d'outils alignée (Nouveau !) */
+        /* Barre d'outils flexible (Anti-débordement) */
         .header-nav { 
             width: 100%; max-width: 400px; 
-            display: flex; align-items: center; gap: 10px; 
-            margin-top: 15px; /* Un peu d'air par rapport au haut */
-            z-index: 100;
+            display: flex; align-items: center; gap: 8px; 
+            margin-top: 15px; z-index: 100;
+            box-sizing: border-box;
         }
 
         .info-switch, .theme-switch {
-            width: 45px; height: 45px; min-width: 45px; border-radius: 12px;
+            width: 42px; height: 42px; min-width: 42px; border-radius: 10px;
             background: var(--input-bg); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 20px;
+            cursor: pointer; font-size: 18px; flex-shrink: 0; /* Empêche de rétrécir */
         }
 
         #recherche {
-            flex-grow: 1; /* Prend toute la place restante */
-            padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text-main); font-size: 16px;
+            flex: 1; /* Prend l'espace restant */
+            min-width: 0; /* Permet de rétrécir sur les petits écrans */
+            padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-main); font-size: 15px;
             outline: none; box-sizing: border-box;
         }
 
-        /* Conteneur de la Carte */
+        /* Design de la Carte */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
-            height: 52vh; min-height: 300px; margin: 10px 0; 
+            height: 52vh; min-height: 280px; margin: 10px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -89,39 +90,34 @@
         .front { background: var(--card-front); }
         .back { background: var(--card-front); color: var(--text-main); transform: rotateY(180deg); }
 
-        .arabic { font-size: clamp(40px, 14vw, 80px); font-weight: 800; color: var(--accent); text-align: center; }
-        .translation { font-size: clamp(28px, 9vw, 40px); font-weight: 700; text-align: center; }
+        .arabic { font-size: clamp(40px, 14vw, 75px); font-weight: 800; color: var(--accent); text-align: center; }
+        .translation { font-size: clamp(25px, 9vw, 35px); font-weight: 700; text-align: center; }
 
-        /* Bas de page */
-        .bottom-section {
-            width: 100%; max-width: 400px;
-            display: flex; flex-direction: column; align-items: center;
-            gap: 15px;
-        }
-
+        /* Zone de contrôle basse */
+        .bottom-section { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .controls { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 320px; }
 
         .btn-circle {
-            width: 65px; height: 65px; border-radius: 20px;
+            width: 60px; height: 60px; border-radius: 18px;
             background: var(--card-front); border: 1px solid var(--border);
-            color: var(--text-main); font-size: 26px; cursor: pointer;
+            color: var(--text-main); font-size: 24px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
         }
 
         .btn-mix {
-            padding: 12px 25px; border-radius: 30px;
+            padding: 10px 20px; border-radius: 30px;
             background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent);
-            color: var(--accent); font-size: 13px; font-weight: 800;
+            color: var(--accent); font-size: 12px; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
         }
 
-        #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
+        #count { font-size: 13px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .fav-badge { position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; z-index: 10; }
 
-        /* Modal */
+        /* Modal Guide */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-front); margin: 20% auto; padding: 30px; border: 1px solid var(--accent); border-radius: 30px; width: 80%; max-width: 400px; text-align: center; color: var(--text-main); position: relative; }
-        .close { position: absolute; top: 15px; right: 20px; color: var(--accent); font-size: 28px; cursor: pointer; }
+        .modal-content { background: var(--card-front); margin: 20% auto; padding: 25px; border: 1px solid var(--accent); border-radius: 25px; width: 85%; max-width: 380px; text-align: center; color: var(--text-main); position: relative; }
+        .close { position: absolute; top: 10px; right: 15px; color: var(--accent); font-size: 24px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -140,9 +136,9 @@
         <div class="modal-content">
             <span class="close" onclick="toggleInfo()">&times;</span>
             <h2 style="color: var(--accent)">Guide Premium</h2>
-            <ul style="text-align: left; line-height: 1.8; font-size: 15px;">
-                <li>🔄 <b>Retourner :</b> Appuyez sur la carte.</li>
-                <li>👉 <b>Naviguer :</b> Glissez (Swipe) ou flèches.</li>
+            <ul style="text-align: left; line-height: 1.8; font-size: 14px; margin-top: 15px;">
+                <li>🔄 <b>Retourner :</b> Touchez la carte.</li>
+                <li>👉 <b>Naviguer :</b> Swiper ou flèches.</li>
                 <li>🔀 <b>Mélanger :</b> Bouton MIX.</li>
                 <li>❤️ <b>Favoris :</b> Prioritaires au démarrage.</li>
             </ul>
@@ -173,11 +169,12 @@
     <script src="donnees.js"></script>
 
     <script>
+        // --- OFFLINE ---
         if ('serviceWorker' in navigator) {
-            const version = new Date().getTime(); 
-            navigator.serviceWorker.register('sw.js?v=' + version);
+            navigator.serviceWorker.register('sw.js?v=' + new Date().getTime());
         }
 
+        // --- THEME ---
         const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
 
         function appliquerTheme() {
@@ -194,6 +191,7 @@
             appliquerTheme();
         }
 
+        // --- LOGIQUE APP ---
         let index = 0; let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
 
@@ -201,8 +199,12 @@
             if (typeof dictionnaireGeant !== 'undefined') {
                 let lesFavoris = dictionnaireGeant.filter(m => favoris.some(f => f.arabe === m.arabe));
                 let leReste = dictionnaireGeant.filter(m => !favoris.some(f => f.arabe === m.arabe));
+                
+                // Mélange
                 lesFavoris.sort(() => Math.random() - 0.5);
                 leReste.sort(() => Math.random() - 0.5);
+                
+                // Fusion : Favoris d'abord
                 liste = [...lesFavoris, ...leReste];
                 index = 0; MAJ();
             }
@@ -216,6 +218,7 @@
             document.getElementById('fr').textContent = mot.francais;
             document.getElementById('count').textContent = (index + 1) + " / " + liste.length;
             document.getElementById('progress-bar').style.width = ((index + 1) / liste.length * 100) + "%";
+            
             const estFav = favoris.some(f => f.arabe === mot.arabe);
             document.getElementById('fav-icon').textContent = estFav ? "❤️" : "🤍";
         }
@@ -245,6 +248,7 @@
             index = 0; MAJ();
         }
 
+        // SWIPE
         let startX = 0;
         document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('touch-zone').addEventListener('touchend', e => {
