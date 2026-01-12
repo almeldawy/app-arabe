@@ -1,9 +1,8 @@
 {
   "name": "Arabe Premium",
   "short_name": "Arabe",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#0a0f1a",
   "theme_color": "#0a0f1a",
   "icons": [
@@ -12,12 +11,6 @@
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "web-app-manifest-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
     },
     {
       "src": "web-app-manifest-512x512.png",
