@@ -8,54 +8,62 @@
     
     <style>
         :root {
+            /* Mode Sombre par défaut (Anthracite & Or) */
             --bg: #0a0f1a;
             --card-front: #1e293b;
             --accent: #fbbf24; 
             --text-main: #ffffff;
             --border: rgba(255, 255, 255, 0.15);
+            --input-bg: #162033;
         }
 
-        /* CONFIGURATION "PLEIN ÉCRAN" SANS SCROLL */
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; /* Interdit le défilement */
+        [data-theme="light"] {
+            /* Mode Clair Premium (Sable & Ardoise) */
+            --bg: #f8f9fa;
+            --card-front: #ffffff;
+            --accent: #b45309; /* Ambre plus foncé pour la lisibilité */
+            --text-main: #1e293b;
+            --border: rgba(0, 0, 0, 0.1);
+            --input-bg: #ffffff;
         }
+
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; transition: background 0.4s ease; }
 
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
             background-color: var(--bg);
             color: var(--text-main); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: space-between; /* Distribue l'espace verticalement */
-            padding: 10px 15px;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: space-between;
+            padding: 10px 15px; box-sizing: border-box;
             touch-action: none;
         }
 
-        /* Éléments plus compacts */
-        .header-nav { width: 100%; max-width: 400px; }
-        .progress-bar-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-        #progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; }
-
-        #recherche {
-            width: 100%; max-width: 400px; padding: 12px; 
-            background: #162033; border: 1px solid var(--border);
-            border-radius: 12px; color: white; font-size: 16px;
-            box-sizing: border-box; outline: none; margin-top: 5px;
+        /* Bouton Theme flottant Premium */
+        .theme-switch {
+            position: absolute; top: 15px; right: 15px;
+            width: 45px; height: 45px; border-radius: 12px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* TAILLE DE CARTE ADAPTATIVE */
+        .header-nav { width: 100%; max-width: 400px; margin-top: 10px; }
+        .progress-bar-bg { height: 4px; background: rgba(128,128,128,0.2); border-radius: 10px; }
+        #progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: 0.5s; }
+
+        #recherche {
+            width: 100%; max-width: 400px; padding: 12px 15px; 
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text-main); font-size: 16px;
+            box-sizing: border-box; outline: none; margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
         .card-container { 
-            perspective: 2000px; 
-            width: 100%; 
-            max-width: 340px; 
-            height: 50vh; /* Utilise 50% de la hauteur de l'écran */
-            min-height: 250px;
-            margin: 10px 0; 
+            perspective: 2000px; width: 100%; max-width: 340px; 
+            height: 50vh; min-height: 280px; margin: 10px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -63,66 +71,58 @@
 
         .face {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 25px;
+            backface-visibility: hidden; border-radius: 30px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; box-sizing: border-box;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            padding: 25px; box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
         }
 
-        .front { background: var(--card-front); border: 1px solid rgba(255,255,255,0.1); }
+        .front { background: var(--card-front); }
         .back { background: #ffffff; color: #000000; transform: rotateY(180deg); }
 
         .arabic { 
-            font-size: clamp(35px, 12vw, 70px); 
-            font-weight: 800; color: var(--accent);
-            text-align: center;
+            font-size: clamp(40px, 14vw, 75px); 
+            font-weight: 800; color: var(--accent); text-align: center;
         }
 
-        .translation { 
-            font-size: clamp(25px, 8vw, 35px); 
-            font-weight: 700; text-align: center;
-        }
+        .translation { font-size: clamp(28px, 9vw, 38px); font-weight: 700; text-align: center; }
 
-        /* Contrôles compacts en bas */
         .bottom-section {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            padding-bottom: 10px;
+            width: 100%; max-width: 400px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 10px; padding-bottom: 15px;
         }
 
-        .controls { 
-            display: flex; justify-content: space-around; align-items: center;
-            width: 100%;
-        }
+        .controls { display: flex; justify-content: space-around; align-items: center; width: 100%; }
 
         .btn-circle {
-            width: 55px; height: 55px; border-radius: 15px;
-            background: #1e293b; border: 1px solid var(--border);
-            color: white; font-size: 20px; cursor: pointer;
+            width: 60px; height: 60px; border-radius: 18px;
+            background: var(--card-front); border: 1px solid var(--border);
+            color: var(--text-main); font-size: 22px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .btn-audio {
-            width: 70px; height: 70px; background: var(--accent);
-            color: #000; border: none; border-radius: 50%;
-            font-size: 28px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+            width: 75px; height: 75px; background: var(--accent);
+            color: #ffffff; border: none; border-radius: 50%;
+            font-size: 32px; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(180, 83, 9, 0.3);
         }
 
-        #count { font-size: 14px; font-weight: bold; color: var(--accent); margin-bottom: 5px; }
+        #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
 
-        .fav-badge { position: absolute; top: 15px; right: 15px; font-size: 24px; }
+        .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
+
+    <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
 
     <div class="header-nav">
         <div class="progress-bar-bg"><div id="progress-bar"></div></div>
-        <input type="text" id="recherche" placeholder="Rechercher...">
+        <input type="text" id="recherche" placeholder="Rechercher un mot..." oninput="filtrer()">
     </div>
 
     <div class="card-container" id="touch-zone">
@@ -144,7 +144,7 @@
             <button class="btn-audio" onclick="ecouter(event)">🔊</button>
             <button class="btn-circle" onclick="change(1)">➡️</button>
         </div>
-        <button style="background:none; border:none; color:var(--accent); font-size:12px; margin-top:5px;" onclick="melanger()">🔀 MÉLANGER</button>
+        <div style="color:var(--accent); font-size:12px; font-weight:bold; cursor:pointer; margin-top:5px;" onclick="melanger()">🔀 MÉLANGER LA LISTE</div>
     </div>
 
     <script src="donnees.js"></script>
@@ -184,6 +184,25 @@
             if (fIndex > -1) favoris.splice(fIndex, 1);
             else favoris.push(motActuel);
             localStorage.setItem('favoris', JSON.stringify(favoris));
+            MAJ();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.textContent = '🌙';
+            }
+        }
+
+        function filtrer() {
+            const s = document.getElementById('recherche').value.toLowerCase();
+            liste = dictionnaireGeant.filter(m => m.francais.toLowerCase().includes(s) || m.arabe.includes(s));
+            index = 0;
             MAJ();
         }
 
