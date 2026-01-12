@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>Arabe Premium</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0f1a">
     
     <style>
-        /* 1. RESET GLOBAL : Empêche tout débordement mystérieux */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
@@ -37,48 +41,36 @@
             color: var(--text-main); 
             display: flex; flex-direction: column; align-items: center; 
             justify-content: space-between;
-            
-            /* 2. SAFE AREA : On respecte l'encoche du téléphone (Notch) */
+            /* Safe Area pour l'encoche */
             padding-top: env(safe-area-inset-top); 
             padding-bottom: max(20px, env(safe-area-inset-bottom));
-            padding-left: 10px;
-            padding-right: 10px;
-            
+            padding-left: 10px; padding-right: 10px;
             touch-action: none;
         }
 
-        /* Barre de progression collée tout en haut (au-dessus de tout) */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
             background: rgba(128,128,128,0.1); z-index: 2000;
         }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: 0.5s; }
 
-        /* 3. HEADER FLEXIBLE : S'adapte sans sortir de l'écran */
         .header-nav { 
             width: 100%; max-width: 400px; 
             display: flex; align-items: center; gap: 8px; 
-            margin-top: 10px; /* Petit espace sous l'encoche */
-            z-index: 100;
+            margin-top: 15px; z-index: 100;
         }
 
         .info-switch, .theme-switch {
-            width: 44px; height: 44px; 
-            min-width: 44px; /* Fixe la taille minimale */
-            border-radius: 12px;
+            width: 44px; height: 44px; min-width: 44px; border-radius: 12px;
             background: var(--input-bg); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 18px; 
-            flex-shrink: 0; /* INTERDIT de rétrécir */
+            cursor: pointer; font-size: 18px; flex-shrink: 0;
         }
 
         #recherche {
-            flex: 1; /* Prend juste la place restante */
-            width: 100%; /* Sécurité */
-            min-width: 0; /* Autorise à rétrécir si l'écran est minuscule */
+            flex: 1; width: 100%; min-width: 0;
             padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text-main); font-size: 16px;
-            outline: none;
+            border-radius: 12px; color: var(--text-main); font-size: 16px; outline: none;
         }
 
         .card-container { 
@@ -93,8 +85,7 @@
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden; border-radius: 30px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             border: 1px solid var(--border);
         }
 
@@ -178,21 +169,8 @@
     <script src="donnees.js"></script>
 
     <script>
-        // --- 4. GESTION DU CACHE : Pour forcer la mise à jour ---
         if ('serviceWorker' in navigator) {
-            // L'ajout de ?v=Date force le navigateur à vérifier le fichier SW
-            navigator.serviceWorker.register('sw.js?v=' + new Date().getTime())
-            .then(reg => {
-                reg.onupdatefound = () => {
-                    const installingWorker = reg.installing;
-                    installingWorker.onstatechange = () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // Nouvelle version détectée !
-                            console.log('Nouveau contenu disponible.');
-                        }
-                    };
-                };
-            });
+            navigator.serviceWorker.register('sw.js?v=' + new Date().getTime());
         }
 
         const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
