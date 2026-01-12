@@ -39,13 +39,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. RÉPONSE AUX REQUÊTES : Stratégie "Network First"
-// On essaie de prendre la version la plus récente sur internet
-// Si on n'a pas de réseau, on donne la version en cache
+// 3. RÉPONSE AUX REQUÊTES : Stratégie "Cache First"
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.match(event.request).then((response) => {
+      // On rend le fichier du cache s'il existe, sinon on va sur le réseau
+      return response || fetch(event.request);
     })
   );
 });
