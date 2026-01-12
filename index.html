@@ -7,14 +7,15 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+    <meta name="theme-color" content="#0a0f1a">
+
     <title>Arabe Premium</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0f1a">
     
     <style>
+        /* RESET & BASE */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        
         :root {
             --bg: #0a0f1a;
             --card-front: #1e293b;
@@ -25,57 +26,59 @@
         }
 
         [data-theme="light"] {
-            --bg: #f8f9fa;
-            --card-front: #ffffff;
-            --accent: #b45309; 
-            --text-main: #1e293b;
-            --border: rgba(0, 0, 0, 0.1);
-            --input-bg: #ffffff;
+            --bg: #f8f9fa; --card-front: #ffffff; --accent: #b45309; 
+            --text-main: #1e293b; --border: rgba(0, 0, 0, 0.1); --input-bg: #ffffff;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; transition: background 0.4s ease; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
 
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
-            background-color: var(--bg);
-            color: var(--text-main); 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: space-between;
-            /* Safe Area pour l'encoche */
-            padding-top: env(safe-area-inset-top); 
+            background-color: var(--bg); color: var(--text-main); 
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            /* Gestion de l'encoche (Safe Area) */
+            padding-top: max(10px, env(safe-area-inset-top)); 
             padding-bottom: max(20px, env(safe-area-inset-bottom));
             padding-left: 10px; padding-right: 10px;
             touch-action: none;
         }
 
+        /* BARRE PROGRESSION HAUTE */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
             background: rgba(128,128,128,0.1); z-index: 2000;
         }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: 0.5s; }
 
+        /* HEADER (Sécurité Anti-Débordement) */
         .header-nav { 
             width: 100%; max-width: 400px; 
-            display: flex; align-items: center; gap: 8px; 
-            margin-top: 15px; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between; 
+            gap: 8px; /* Écart réduit */
+            margin-top: 10px; z-index: 100;
         }
 
+        /* Boutons réduits à 40px pour gagner de la place */
         .info-switch, .theme-switch {
-            width: 44px; height: 44px; min-width: 44px; border-radius: 12px;
-            background: var(--input-bg); border: 1px solid var(--border);
+            width: 40px; height: 40px; min-width: 40px; 
+            border-radius: 10px; background: var(--input-bg); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-size: 18px; flex-shrink: 0;
         }
 
         #recherche {
-            flex: 1; width: 100%; min-width: 0;
-            padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text-main); font-size: 16px; outline: none;
+            flex: 1; /* Prend la place restante */
+            min-width: 0; /* Autorise à rétrécir */
+            padding: 10px 12px; height: 40px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-main); font-size: 15px; outline: none;
         }
 
+        /* CARTE */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
-            height: 52vh; min-height: 280px; margin: 10px 0; 
+            flex-grow: 1; /* Prend l'espace vertical disponible */
+            max-height: 55vh; min-height: 280px; margin: 15px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -83,23 +86,24 @@
 
         .face {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 30px;
+            backface-visibility: hidden; border-radius: 25px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             border: 1px solid var(--border);
         }
 
         .front { background: var(--card-front); }
         .back { background: var(--card-front); color: var(--text-main); transform: rotateY(180deg); }
 
-        .arabic { font-size: clamp(35px, 12vw, 70px); font-weight: 800; color: var(--accent); text-align: center; }
-        .translation { font-size: clamp(22px, 8vw, 35px); font-weight: 700; text-align: center; }
+        .arabic { font-size: clamp(30px, 12vw, 70px); font-weight: 800; color: var(--accent); text-align: center; }
+        .translation { font-size: clamp(20px, 8vw, 35px); font-weight: 700; text-align: center; }
 
-        .bottom-section { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        /* CONTROLES BAS */
+        .bottom-section { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .controls { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 320px; }
 
         .btn-circle {
-            width: 60px; height: 60px; border-radius: 20px;
+            width: 55px; height: 55px; border-radius: 18px;
             background: var(--card-front); border: 1px solid var(--border);
             color: var(--text-main); font-size: 24px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
@@ -108,23 +112,22 @@
         .btn-mix {
             padding: 12px 20px; border-radius: 30px;
             background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent);
-            color: var(--accent); font-size: 13px; font-weight: 800;
+            color: var(--accent); font-size: 12px; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
         }
 
-        #count { font-size: 13px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        #count { font-size: 12px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .fav-badge { position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; z-index: 10; }
 
+        /* MODAL */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-front); margin: 20% auto; padding: 25px; border: 1px solid var(--accent); border-radius: 25px; width: 85%; max-width: 380px; text-align: center; color: var(--text-main); position: relative; }
+        .modal-content { background: var(--card-front); margin: 25% auto; padding: 25px; border: 1px solid var(--accent); border-radius: 25px; width: 85%; max-width: 350px; text-align: center; color: var(--text-main); position: relative; }
         .close { position: absolute; top: 10px; right: 15px; color: var(--accent); font-size: 24px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="progress-container">
-        <div id="progress-bar"></div>
-    </div>
+    <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="header-nav">
         <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
@@ -169,8 +172,12 @@
     <script src="donnees.js"></script>
 
     <script>
+        // FORCER LA MISE A JOUR DU CACHE
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js?v=' + new Date().getTime());
+            // Le paramètre ?v=... force le navigateur à vérifier si le fichier a changé
+            navigator.serviceWorker.register('sw.js?v=' + new Date().getTime()).then(registration => {
+                registration.update(); // Force la mise à jour immédiate
+            });
         }
 
         const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
