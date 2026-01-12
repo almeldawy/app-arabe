@@ -8,7 +8,6 @@
     
     <style>
         :root {
-            /* Mode Sombre par défaut (Anthracite & Or) */
             --bg: #0a0f1a;
             --card-front: #1e293b;
             --accent: #fbbf24; 
@@ -18,10 +17,9 @@
         }
 
         [data-theme="light"] {
-            /* Mode Clair Premium (Sable & Ardoise) */
             --bg: #f8f9fa;
             --card-front: #ffffff;
-            --accent: #b45309; /* Ambre plus foncé pour la lisibilité */
+            --accent: #b45309; 
             --text-main: #1e293b;
             --border: rgba(0, 0, 0, 0.1);
             --input-bg: #ffffff;
@@ -39,7 +37,6 @@
             touch-action: none;
         }
 
-        /* Bouton Theme flottant Premium */
         .theme-switch {
             position: absolute; top: 15px; right: 15px;
             width: 45px; height: 45px; border-radius: 12px;
@@ -63,7 +60,7 @@
 
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
-            height: 50vh; min-height: 280px; margin: 10px 0; 
+            height: 55vh; min-height: 300px; margin: 15px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -91,24 +88,17 @@
         .bottom-section {
             width: 100%; max-width: 400px;
             display: flex; flex-direction: column; align-items: center;
-            gap: 10px; padding-bottom: 15px;
+            gap: 15px; padding-bottom: 25px;
         }
 
         .controls { display: flex; justify-content: space-around; align-items: center; width: 100%; }
 
         .btn-circle {
-            width: 60px; height: 60px; border-radius: 18px;
+            width: 70px; height: 70px; border-radius: 20px;
             background: var(--card-front); border: 1px solid var(--border);
-            color: var(--text-main); font-size: 22px; cursor: pointer;
+            color: var(--text-main); font-size: 26px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .btn-audio {
-            width: 75px; height: 75px; background: var(--accent);
-            color: #ffffff; border: none; border-radius: 50%;
-            font-size: 32px; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(180, 83, 9, 0.3);
         }
 
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
@@ -141,10 +131,9 @@
         <div id="count">0 / 0</div>
         <div class="controls">
             <button class="btn-circle" onclick="change(-1)">⬅️</button>
-            <button class="btn-audio" onclick="ecouter(event)">🔊</button>
+            <div style="color:var(--accent); font-size:14px; font-weight:bold; cursor:pointer;" onclick="melanger()">🔀 MIX</div>
             <button class="btn-circle" onclick="change(1)">➡️</button>
         </div>
-        <div style="color:var(--accent); font-size:12px; font-weight:bold; cursor:pointer; margin-top:5px;" onclick="melanger()">🔀 MÉLANGER LA LISTE</div>
     </div>
 
     <script src="donnees.js"></script>
@@ -213,12 +202,6 @@
             if (startX - endX > 50) change(1);
             if (endX - startX > 50) change(-1);
         });
-
-        function ecouter(e) {
-            e.stopPropagation();
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(liste[index].arabe)}&tl=ar&client=tw-ob`;
-            new Audio(url).play();
-        }
 
         window.onload = charger;
     </script>
