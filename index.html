@@ -4,82 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0f1a">
-
+    <meta name="apple-mobile-web-app-title" content="Arabe">
+    
     <title>Arabe Premium</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0f1a">
     
     <style>
-        /* RESET TOTAL POUR ÉVITER LES DÉBORDEMENTS */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         :root {
-            --bg: #0a0f1a;
-            --card-front: #1e293b;
-            --accent: #fbbf24; 
-            --text-main: #ffffff;
-            --border: rgba(255, 255, 255, 0.15);
-            --input-bg: #162033;
+            --bg: #0a0f1a; --card-front: #1e293b; --accent: #fbbf24; 
+            --text-main: #ffffff; --border: rgba(255, 255, 255, 0.15); --input-bg: #162033;
         }
-
         [data-theme="light"] {
             --bg: #f8f9fa; --card-front: #ffffff; --accent: #b45309; 
             --text-main: #1e293b; --border: rgba(0, 0, 0, 0.1); --input-bg: #ffffff;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
+        html, body { 
+            height: 100%; margin: 0; padding: 0; 
+            overflow: hidden; background-color: var(--bg); 
+            width: 100vw;
+        }
 
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
-            color: var(--text-main); 
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            /* Respect de l'encoche du téléphone */
-            padding-top: env(safe-area-inset-top); 
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-            padding-left: 10px; padding-right: 10px;
+            padding: env(safe-area-inset-top) 10px max(20px, env(safe-area-inset-bottom)) 10px;
             touch-action: none;
         }
 
-        /* BARRE DE PROGRESSION HAUTE */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
             background: rgba(128,128,128,0.1); z-index: 2000;
         }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: 0.5s; }
 
-        /* BARRE DE NAVIGATION (FIXE LE PROBLÈME DU BOUTON QUI SORT) */
         .header-nav { 
-            width: 100%; max-width: 400px; 
-            display: flex; align-items: center; 
-            gap: 10px; 
-            margin-top: 15px; 
-            z-index: 100;
+            width: 100%; max-width: 400px; display: flex; align-items: center; 
+            gap: 8px; margin-top: 10px; z-index: 100;
         }
 
-        .info-switch, .theme-switch {
-            width: 42px; height: 42px; 
-            min-width: 42px; /* Empeche le bouton de s'écraser */
-            border-radius: 12px; background: var(--input-bg); border: 1px solid var(--border);
+        .btn-tool {
+            width: 42px; height: 42px; min-width: 42px; border-radius: 12px;
+            background: var(--input-bg); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 18px; 
-            flex-shrink: 0; /* INTERDIT de sortir de l'écran */
+            cursor: pointer; font-size: 18px; flex-shrink: 0;
         }
 
         #recherche {
-            flex: 1; /* C'est lui qui s'adapte à la place restante */
-            min-width: 0; /* Autorise le champ à rétrécir sur petit écran */
-            height: 42px; padding: 0 15px;
+            flex: 1; min-width: 0; height: 42px; padding: 0 15px;
             background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 12px; color: var(--text-main); font-size: 16px; outline: none;
         }
 
-        /* CARTE */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
-            flex-grow: 1; max-height: 50vh; min-height: 280px; margin: 15px 0; 
+            flex-grow: 1; max-height: 50vh; min-height: 250px; margin: 15px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -89,17 +73,14 @@
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden; border-radius: 30px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
+            padding: 20px; border: 1px solid var(--border);
+            background: var(--card-front); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .front { background: var(--card-front); }
-        .back { background: var(--card-front); color: var(--text-main); transform: rotateY(180deg); }
-
+        .back { transform: rotateY(180deg); }
         .arabic { font-size: clamp(35px, 12vw, 70px); font-weight: 800; color: var(--accent); text-align: center; }
         .translation { font-size: clamp(22px, 8vw, 32px); font-weight: 700; text-align: center; }
 
-        /* BAS DE PAGE */
         .bottom-section { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .controls { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 320px; }
 
@@ -120,7 +101,7 @@
         #count { font-size: 12px; font-weight: bold; color: var(--accent); opacity: 0.8; }
         .fav-badge { position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; z-index: 10; }
 
-        /* MODAL INFO */
+        /* MODAL */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background: var(--card-front); margin: 20% auto; padding: 25px; border: 1px solid var(--accent); border-radius: 25px; width: 85%; max-width: 350px; text-align: center; color: var(--text-main); position: relative; }
         .close { position: absolute; top: 10px; right: 15px; color: var(--accent); font-size: 24px; cursor: pointer; }
@@ -131,21 +112,16 @@
     <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="header-nav">
-        <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
+        <div class="btn-tool" onclick="toggleInfo()">ℹ️</div>
         <input type="text" id="recherche" placeholder="Rechercher..." oninput="filtrer()">
-        <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
+        <div class="btn-tool" onclick="toggleTheme()" id="theme-icon">🌙</div>
     </div>
 
     <div id="info-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="toggleInfo()">&times;</span>
-            <h2 style="color: var(--accent)">Guide Premium</h2>
-            <ul style="text-align: left; line-height: 1.8; font-size: 14px; margin-top: 15px;">
-                <li>🔄 <b>Carte :</b> Touchez pour retourner.</li>
-                <li>👉 <b>Navigation :</b> Swiper ou Flèches.</li>
-                <li>🔀 <b>Mélanger :</b> Bouton MIX.</li>
-                <li>❤️ <b>Favoris :</b> Appuyez sur le coeur.</li>
-            </ul>
+            <h2 style="color: var(--accent)">Guide</h2>
+            <p>Appuyez sur la carte pour voir la traduction.</p>
         </div>
     </div>
 
@@ -171,72 +147,59 @@
     </div>
 
     <script src="donnees.js"></script>
-
     <script>
-        // --- 1. SCRIPT ANTI-CACHE (Crucial pour supprimer la barre Chrome) ---
+        // --- LE "TUEUR DE BARRE" (FORCE LE MODE STANDALONE) ---
+        if (window.navigator.standalone === false) {
+            // Pour iOS : Détecte si on est dans le navigateur
+            console.log("Merci d'ajouter à l'écran d'accueil pour le plein écran.");
+        }
+
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for(let reg of registrations) reg.unregister(); 
-            });
+            navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
             navigator.serviceWorker.register('sw.js?v=' + Date.now());
         }
 
-        // --- 2. LOGIQUE DU THEME ---
-        const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
-
+        // --- THEME & LOGIQUE ---
         function appliquerTheme() {
-            const choixManuel = localStorage.getItem('theme');
-            let themeFinal = choixManuel || (prefSystemeSombre.matches ? 'dark' : 'light');
-            document.body.setAttribute('data-theme', themeFinal);
-            document.getElementById('theme-icon').textContent = (themeFinal === 'dark') ? '🌙' : '☀️';
-            document.querySelector('meta[name="theme-color"]').setAttribute('content', (themeFinal === 'dark') ? '#0a0f1a' : '#f8f9fa');
+            const t = localStorage.getItem('theme') || 'dark';
+            document.body.setAttribute('data-theme', t);
+            document.getElementById('theme-icon').textContent = (t === 'dark') ? '🌙' : '☀️';
         }
-
         function toggleTheme() {
-            const nouveau = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', nouveau);
-            appliquerTheme();
+            const n = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', n); appliquerTheme();
         }
 
-        // --- 3. LOGIQUE DES CARTES ---
-        let index = 0; let liste = [];
-        let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
+        let index = 0, liste = [], favoris = JSON.parse(localStorage.getItem('favoris')) || [];
 
         function charger() {
             if (typeof dictionnaireGeant !== 'undefined') {
-                let lesFavoris = dictionnaireGeant.filter(m => favoris.some(f => f.arabe === m.arabe));
-                let leReste = dictionnaireGeant.filter(m => !favoris.some(f => f.arabe === m.arabe));
-                lesFavoris.sort(() => Math.random() - 0.5);
-                leReste.sort(() => Math.random() - 0.5);
-                liste = [...lesFavoris, ...leReste];
-                index = 0; MAJ();
+                liste = [...dictionnaireGeant].sort(() => Math.random() - 0.5);
+                MAJ();
             }
         }
 
         function MAJ() {
-            if (liste.length === 0) return;
-            const mot = liste[index];
+            if (!liste.length) return;
+            const m = liste[index];
             document.getElementById('card').classList.remove('flipped');
-            document.getElementById('ar').textContent = mot.arabe;
-            document.getElementById('fr').textContent = mot.francais;
+            document.getElementById('ar').textContent = m.arabe;
+            document.getElementById('fr').textContent = m.francais;
             document.getElementById('count').textContent = (index + 1) + " / " + liste.length;
             document.getElementById('progress-bar').style.width = ((index + 1) / liste.length * 100) + "%";
-            const estFav = favoris.some(f => f.arabe === mot.arabe);
-            document.getElementById('fav-icon').textContent = estFav ? "❤️" : "🤍";
+            document.getElementById('fav-icon').textContent = favoris.some(f => f.arabe === m.arabe) ? "❤️" : "🤍";
         }
 
         function tourner() { document.getElementById('card').classList.toggle('flipped'); }
-        function change(dir) { index = (index + dir + liste.length) % liste.length; MAJ(); }
+        function change(d) { index = (index + d + liste.length) % liste.length; MAJ(); }
         function melanger() { liste.sort(() => Math.random() - 0.5); index = 0; MAJ(); }
         
         function toggleFavori(e) {
             e.stopPropagation();
-            const motActuel = liste[index];
-            const fIndex = favoris.findIndex(f => f.arabe === motActuel.arabe);
-            if (fIndex > -1) favoris.splice(fIndex, 1);
-            else favoris.push(motActuel);
-            localStorage.setItem('favoris', JSON.stringify(favoris));
-            MAJ();
+            const m = liste[index];
+            const i = favoris.findIndex(f => f.arabe === m.arabe);
+            if (i > -1) favoris.splice(i, 1); else favoris.push(m);
+            localStorage.setItem('favoris', JSON.stringify(favoris)); MAJ();
         }
 
         function toggleInfo() {
@@ -252,14 +215,13 @@
 
         // SWIPE
         let startX = 0;
-        document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('touch-zone').addEventListener('touchend', e => {
-            let endX = e.changedTouches[0].clientX;
-            if (startX - endX > 50) change(1);
-            if (endX - startX > 50) change(-1);
+        document.body.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.body.addEventListener('touchend', e => {
+            let diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) change(diff > 0 ? 1 : -1);
         });
 
-        window.onload = function() { appliquerTheme(); charger(); };
+        window.onload = () => { appliquerTheme(); charger(); };
     </script>
 </body>
 </html>
