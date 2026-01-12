@@ -83,7 +83,13 @@
         }
 
         .front { background: var(--card-front); }
-        .back { background: #ffffff; color: #000000; transform: rotateY(180deg); }
+        
+        /* MODIFICATION ICI : On utilise les variables pour le mode sombre/clair */
+        .back { 
+            background: var(--card-front); 
+            color: var(--text-main); 
+            transform: rotateY(180deg); 
+        }
 
         .arabic { font-size: clamp(40px, 14vw, 80px); font-weight: 800; color: var(--accent); text-align: center; }
         .translation { font-size: clamp(28px, 9vw, 40px); font-weight: 700; text-align: center; }
@@ -114,7 +120,7 @@
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
 
-        /* Style Guide/Modal */
+        /* Modal Guide */
         .modal {
             display: none; position: fixed; z-index: 1000;
             left: 0; top: 0; width: 100%; height: 100%;
@@ -182,19 +188,16 @@
     <script src="donnees.js"></script>
 
     <script>
-        // --- 1. GESTION DU SERVICE WORKER (OFFLINE) ---
         if ('serviceWorker' in navigator) {
             const version = new Date().getTime(); 
-            navigator.serviceWorker.register('sw.js?v=' + version)
-                .then(() => console.log("SW OK"));
+            navigator.serviceWorker.register('sw.js?v=' + version);
         }
 
-        // --- 2. GESTION DU THÈME INTELLIGENT ---
         const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
 
         function appliquerTheme() {
             const choixManuel = localStorage.getItem('theme');
-            let themeFinal = 'dark'; // Par défaut
+            let themeFinal = 'dark';
 
             if (choixManuel) {
                 themeFinal = choixManuel;
@@ -217,7 +220,6 @@
             appliquerTheme();
         }
 
-        // --- 3. LOGIQUE DE L'APPLICATION ---
         let index = 0;
         let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
@@ -267,7 +269,6 @@
             MAJ();
         }
 
-        // Swipe Tactile
         let startX = 0;
         document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('touch-zone').addEventListener('touchend', e => {
