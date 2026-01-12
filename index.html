@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon App Arabe</title>
-    
+    <title>Mon App Arabe Pro</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/197/197558.png">
 
     <style>
-        :root { --bg: #f0f2f5; --text: #1c1e21; --card: #2c3e50; --success: #27ae60; }
+        :root { --bg: #f0f2f5; --text: #1c1e21; --card: #2c3e50; --success: #27ae60; --fav: #e74c3c; }
         [data-theme="dark"] { --bg: #121212; --text: #e4e6eb; --card: #1e1e1e; }
         
         body { 
-            font-family: system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, sans-serif; 
             background: var(--bg); color: var(--text); 
             display: flex; flex-direction: column; align-items: center; 
-            padding: 10px; margin: 0; transition: 0.3s;
-            overflow-x: hidden;
+            padding: 10px; margin: 0; transition: 0.3s; overflow-x: hidden;
+            touch-action: none; /* Nécessaire pour le swipe personnalisé */
         }
 
-        .container { width: 100%; max-width: 450px; text-align: center; }
+        .container { width: 100%; max-width: 450px; text-align: center; margin-top: 20px; }
+
+        /* Barre de progression */
+        .progress-container { width: 100%; height: 8px; background: #ccc; border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: var(--success); transition: 0.3s; }
 
         #recherche {
-            width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #ccc;
-            margin: 10px 0; font-size: 16px; box-sizing: border-box; background: white;
-            color: black;
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #ccc;
+            margin-bottom: 10px; font-size: 16px; box-sizing: border-box;
         }
 
-        .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 20px 0; }
+        .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 10px 0; position: relative; }
         
         #card {
             width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+            transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer;
         }
 
         #card.flipped { transform: rotateY(180deg); }
@@ -46,53 +46,30 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 20px; box-sizing: border-box;
         }
 
-        /* Face Arabe (Recto) */
-        .front { background: #2c3e50; color: white !important; }
+        .front { background: var(--card); color: white; }
+        .back { background: white; color: #000; transform: rotateY(180deg); border: 4px solid var(--card); }
 
-        /* Face Française (Verso) - On force le blanc et noir pour la visibilité */
-        .back { 
-            background: white !important; 
-            color: #000000 !important; 
-            transform: rotateY(180deg); 
-            border: 4px solid #2c3e50; 
+        .arabic { font-size: clamp(30px, 12vw, 70px); direction: rtl; width: 100%; }
+        .translation { font-size: clamp(25px, 8vw, 45px); font-weight: bold; }
+
+        /* Bouton Favoris sur la carte */
+        .btn-fav {
+            position: absolute; top: 15px; right: 15px; font-size: 28px;
+            cursor: pointer; z-index: 10; filter: grayscale(1); transition: 0.3s;
         }
+        .btn-fav.active { filter: grayscale(0); transform: scale(1.2); }
 
-        .arabic { 
-            font-size: clamp(30px, 12vw, 70px); 
-            line-height: 1.4;
-            direction: rtl; 
-            width: 100%;
-            word-wrap: break-word;
-        }
-
-        .translation { 
-            font-size: clamp(25px, 8vw, 45px); 
-            font-weight: bold;
-            color: #000000 !important;
-            width: 100%;
-            word-wrap: break-word;
-        }
-
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; }
         
         button {
-            padding: 15px; border: none; border-radius: 12px;
-            background: #2c3e50; color: white; font-size: 18px;
-            cursor: pointer;
+            padding: 12px; border: none; border-radius: 12px;
+            background: var(--card); color: white; font-size: 16px; cursor: pointer;
         }
+
+        .btn-audio { background: var(--success); width: 60px; height: 60px; border-radius: 50%; font-size: 24px; margin: 15px auto; border: none; color: white; }
         
-        button:active { transform: scale(0.95); }
-
-        .btn-audio {
-            background: var(--success); margin-top: 15px; width: 60px; height: 60px;
-            border-radius: 50%; font-size: 24px; color: white; border: none;
-        }
-
-        #count { margin-top: 15px; font-weight: bold; opacity: 0.7; }
-
-        .theme-toggle { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 24px; z-index: 10; }
-
-        #error-msg { color: white; background: #e74c3c; padding: 15px; border-radius: 10px; margin: 10px; display: none; }
+        #count { margin-top: 10px; font-weight: bold; font-size: 14px; }
+        .theme-toggle { position: absolute; top: 10px; left: 10px; cursor: pointer; font-size: 24px; }
     </style>
 </head>
 <body data-theme="light">
@@ -100,90 +77,109 @@
     <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
 
     <div class="container">
-        <div id="error-msg">⚠️ Erreur : dictionnaireGeant non trouvé dans donnees.js !</div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
         
-        <input type="text" id="recherche" placeholder="Rechercher un mot..." oninput="filtrer()">
+        <input type="text" id="recherche" placeholder="🔍 Rechercher..." oninput="filtrer()">
 
-        <div class="card-container" onclick="tourner()">
-            <div id="card">
-                <div class="face front">
-                    <div class="arabic" id="ar">Chargement...</div>
-                </div>
-                <div class="face back">
-                    <div class="translation" id="fr">...</div>
-                </div>
+        <div class="card-container" id="touch-zone">
+            <div class="btn-fav" id="fav-icon" onclick="toggleFavori(event)">❤️</div>
+            <div id="card" onclick="tourner()">
+                <div class="face front"><div class="arabic" id="ar">...</div></div>
+                <div class="face back"><div class="translation" id="fr">...</div></div>
             </div>
         </div>
 
         <div class="controls">
-            <button onclick="event.stopPropagation(); change(-1)">⬅️ Précédent</button>
-            <button onclick="event.stopPropagation(); change(1)">Suivant ➡️</button>
+            <button onclick="change(-1)">⬅️</button>
+            <button onclick="melanger()">🔀 Mix</button>
+            <button onclick="change(1)">➡️</button>
         </div>
 
         <button class="btn-audio" onclick="ecouter(event)">🔊</button>
-
         <div id="count">0 / 0</div>
     </div>
 
     <script src="donnees.js"></script>
 
     <script>
-        // Enregistrement du Service Worker (pour la Web App)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log("Erreur SW:", err));
-        }
-
         let index = 0;
         let liste = [];
+        let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
+
+        // --- CONCEPT 1: VARIABLES & LOCAL STORAGE ---
+        // localStorage est comme un petit placard dans le téléphone qui garde tes ❤️ même si tu éteins tout.
 
         function charger() {
             if (typeof dictionnaireGeant !== 'undefined') {
                 liste = [...dictionnaireGeant];
                 MAJ();
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
             }
         }
 
         function MAJ() {
-            if (liste.length === 0) {
-                document.getElementById('ar').textContent = "Aucun mot";
-                document.getElementById('fr').textContent = "";
-                document.getElementById('count').textContent = "0 / 0";
-                return;
-            }
+            if (liste.length === 0) return;
+            const motActuel = liste[index];
             document.getElementById('card').classList.remove('flipped');
-            document.getElementById('ar').textContent = liste[index].arabe;
-            document.getElementById('fr').textContent = liste[index].francais;
-            document.getElementById('count').textContent = (index + 1) + " / " + liste.length;
+            document.getElementById('ar').textContent = motActuel.arabe;
+            document.getElementById('fr').textContent = motActuel.francais;
+            
+            // Mise à jour compteur et barre
+            document.getElementById('count').textContent = `${index + 1} / ${liste.length}`;
+            const pourcent = ((index + 1) / liste.length) * 100;
+            document.getElementById('progress-bar').style.width = pourcent + "%";
+
+            // Vérifier si favori
+            const estFav = favoris.some(f => f.arabe === motActuel.arabe);
+            document.getElementById('fav-icon').classList.toggle('active', estFav);
         }
 
-        function tourner() { 
-            if (liste.length > 0) {
-                document.getElementById('card').classList.toggle('flipped');
-            }
-        }
+        function tourner() { document.getElementById('card').classList.toggle('flipped'); }
         
         function change(dir) {
-            if (liste.length === 0) return;
             index = (index + dir + liste.length) % liste.length;
+            MAJ();
+        }
+
+        // --- CONCEPT 2: ALGORITHME DE MÉLANGE ---
+        function melanger() {
+            liste.sort(() => Math.random() - 0.5);
+            index = 0;
+            MAJ();
+        }
+
+        function toggleFavori(e) {
+            e.stopPropagation();
+            const motActuel = liste[index];
+            const favIndex = favoris.findIndex(f => f.arabe === motActuel.arabe);
+            
+            if (favIndex > -1) favoris.splice(favIndex, 1);
+            else favoris.push(motActuel);
+            
+            localStorage.setItem('favoris', JSON.stringify(favoris));
             MAJ();
         }
 
         function filtrer() {
             const s = document.getElementById('recherche').value.toLowerCase();
-            if (typeof dictionnaireGeant !== 'undefined') {
-                liste = dictionnaireGeant.filter(m => 
-                    m.francais.toLowerCase().includes(s) || m.arabe.includes(s)
-                );
-                index = 0;
-                MAJ();
-            }
+            liste = dictionnaireGeant.filter(m => m.francais.toLowerCase().includes(s) || m.arabe.includes(s));
+            index = 0;
+            MAJ();
         }
+
+        // --- CONCEPT 3: ÉVÉNEMENTS TACTILES (SWIPE) ---
+        let touchStartX = 0;
+        document.getElementById('touch-zone').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.getElementById('touch-zone').addEventListener('touchend', e => {
+            let touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) change(1); // Swipe gauche -> Suivant
+            if (touchEndX > touchStartX + 50) change(-1); // Swipe droite -> Précédent
+        });
 
         function ecouter(e) {
             e.stopPropagation();
-            if (liste.length === 0) return;
             const text = liste[index].arabe;
             const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ar&client=tw-ob`;
             new Audio(url).play();
@@ -191,8 +187,7 @@
 
         function toggleTheme() {
             const b = document.body;
-            const isDark = b.getAttribute('data-theme') === 'dark';
-            b.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         }
 
         window.onload = charger;
