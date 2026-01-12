@@ -3,101 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mon App Arabe Pro</title>
+    <title>Arabe Premium</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
-
+    
     <style>
-        :root { --bg: #f0f2f5; --text: #1c1e21; --card: #2c3e50; --success: #27ae60; --fav: #e74c3c; }
-        [data-theme="dark"] { --bg: #121212; --text: #e4e6eb; --card: #1e1e1e; }
-        
+        :root {
+            /* Palette Or et Anthracite */
+            --bg: #0f172a;
+            --card-front: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --accent: #fbbf24; /* Or */
+            --text-main: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
         body { 
-            font-family: system-ui, sans-serif; 
-            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-main); 
             display: flex; flex-direction: column; align-items: center; 
-            padding: 10px; margin: 0; transition: 0.3s; overflow-x: hidden;
-            touch-action: none; /* Nécessaire pour le swipe personnalisé */
+            min-height: 100vh; margin: 0; padding: 20px;
+            overflow: hidden; touch-action: none;
         }
 
-        .container { width: 100%; max-width: 450px; text-align: center; margin-top: 20px; }
+        /* Barre de progression élégante */
+        .header-nav { width: 100%; max-width: 400px; margin-bottom: 30px; }
+        .progress-bar-bg { height: 4px; background: var(--glass); border-radius: 10px; overflow: hidden; }
+        #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.5s ease; shadow: 0 0 10px var(--accent); }
 
-        /* Barre de progression */
-        .progress-container { width: 100%; height: 8px; background: #ccc; border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: var(--success); transition: 0.3s; }
-
+        /* Recherche minimaliste */
         #recherche {
-            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #ccc;
-            margin-bottom: 10px; font-size: 16px; box-sizing: border-box;
+            width: 100%; max-width: 400px; padding: 16px; 
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 16px; color: white; font-size: 16px;
+            backdrop-filter: blur(10px); outline: none; transition: 0.3s;
         }
+        #recherche:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); }
 
-        .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 10px 0; position: relative; }
+        /* Carte Ultra Premium */
+        .card-container { perspective: 2000px; width: 100%; max-width: 380px; height: 450px; margin: 30px 0; }
         
         #card {
             width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer;
+            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         #card.flipped { transform: rotateY(180deg); }
 
         .face {
             position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 20px;
+            backface-visibility: hidden; border-radius: 32px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); padding: 20px; box-sizing: border-box;
+            border: 1px solid var(--border); padding: 40px; box-sizing: border-box;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .front { background: var(--card); color: white; }
-        .back { background: white; color: #000; transform: rotateY(180deg); border: 4px solid var(--card); }
+        .front { background: var(--card-front); }
+        .back { background: #f8fafc; color: #0f172a; transform: rotateY(180deg); }
 
-        .arabic { font-size: clamp(30px, 12vw, 70px); direction: rtl; width: 100%; }
-        .translation { font-size: clamp(25px, 8vw, 45px); font-weight: bold; }
-
-        /* Bouton Favoris sur la carte */
-        .btn-fav {
-            position: absolute; top: 15px; right: 15px; font-size: 28px;
-            cursor: pointer; z-index: 10; filter: grayscale(1); transition: 0.3s;
-        }
-        .btn-fav.active { filter: grayscale(0); transform: scale(1.2); }
-
-        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; }
-        
-        button {
-            padding: 12px; border: none; border-radius: 12px;
-            background: var(--card); color: white; font-size: 16px; cursor: pointer;
+        .arabic { 
+            font-size: clamp(40px, 15vw, 85px); 
+            font-weight: 700; color: var(--accent);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 20px; text-align: center;
         }
 
-        .btn-audio { background: var(--success); width: 60px; height: 60px; border-radius: 50%; font-size: 24px; margin: 15px auto; border: none; color: white; }
-        
-        #count { margin-top: 10px; font-weight: bold; font-size: 14px; }
-        .theme-toggle { position: absolute; top: 10px; left: 10px; cursor: pointer; font-size: 24px; }
+        .translation { 
+            font-size: clamp(28px, 10vw, 42px); 
+            font-weight: 300; letter-spacing: -1px; text-align: center;
+        }
+
+        /* Boutons de contrôle flottants */
+        .controls { 
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 300px; margin-top: 10px;
+        }
+
+        .btn-circle {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--glass); border: 1px solid var(--border);
+            color: white; font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px); transition: 0.3s;
+        }
+        .btn-circle:active { transform: scale(0.9); background: var(--accent); color: black; }
+
+        .btn-audio {
+            width: 80px; height: 80px; background: var(--accent);
+            color: #000; border: none; border-radius: 50%;
+            font-size: 32px; cursor: pointer; margin: 20px 0;
+            box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+        }
+
+        #count { font-size: 14px; opacity: 0.5; letter-spacing: 2px; text-transform: uppercase; }
+
+        .fav-badge {
+            position: absolute; top: 25px; right: 25px; font-size: 24px;
+            filter: grayscale(1); opacity: 0.3; transition: 0.3s;
+        }
+        .fav-badge.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); }
+
     </style>
 </head>
-<body data-theme="light">
+<body>
 
-    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+    <div class="header-nav">
+        <div class="progress-bar-bg"><div id="progress-bar"></div></div>
+    </div>
 
-    <div class="container">
-        <div class="progress-container"><div id="progress-bar"></div></div>
-        
-        <input type="text" id="recherche" placeholder="🔍 Rechercher..." oninput="filtrer()">
+    <input type="text" id="recherche" placeholder="Rechercher avec élégance...">
 
-        <div class="card-container" id="touch-zone">
-            <div class="btn-fav" id="fav-icon" onclick="toggleFavori(event)">❤️</div>
-            <div id="card" onclick="tourner()">
-                <div class="face front"><div class="arabic" id="ar">...</div></div>
-                <div class="face back"><div class="translation" id="fr">...</div></div>
+    <div class="card-container" id="touch-zone">
+        <div id="card" onclick="tourner()">
+            <div class="face front">
+                <div class="fav-badge" id="fav-icon">❤️</div>
+                <div class="arabic" id="ar">...</div>
+                <div id="count">0 / 0</div>
+            </div>
+            <div class="face back">
+                <div class="translation" id="fr">...</div>
             </div>
         </div>
-
-        <div class="controls">
-            <button onclick="change(-1)">⬅️</button>
-            <button onclick="melanger()">🔀 Mix</button>
-            <button onclick="change(1)">➡️</button>
-        </div>
-
-        <button class="btn-audio" onclick="ecouter(event)">🔊</button>
-        <div id="count">0 / 0</div>
     </div>
+
+    <div class="controls">
+        <button class="btn-circle" onclick="change(-1)">←</button>
+        <button class="btn-circle" onclick="melanger()">🔀</button>
+        <button class="btn-circle" onclick="change(1)">→</button>
+    </div>
+
+    <button class="btn-audio" onclick="ecouter(event)">🔊</button>
 
     <script src="donnees.js"></script>
 
@@ -105,9 +141,6 @@
         let index = 0;
         let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
-
-        // --- CONCEPT 1: VARIABLES & LOCAL STORAGE ---
-        // localStorage est comme un petit placard dans le téléphone qui garde tes ❤️ même si tu éteins tout.
 
         function charger() {
             if (typeof dictionnaireGeant !== 'undefined') {
@@ -118,18 +151,17 @@
 
         function MAJ() {
             if (liste.length === 0) return;
-            const motActuel = liste[index];
+            const mot = liste[index];
             document.getElementById('card').classList.remove('flipped');
-            document.getElementById('ar').textContent = motActuel.arabe;
-            document.getElementById('fr').textContent = motActuel.francais;
+            document.getElementById('ar').textContent = mot.arabe;
+            document.getElementById('fr').textContent = mot.francais;
             
-            // Mise à jour compteur et barre
+            // Stats
             document.getElementById('count').textContent = `${index + 1} / ${liste.length}`;
-            const pourcent = ((index + 1) / liste.length) * 100;
-            document.getElementById('progress-bar').style.width = pourcent + "%";
+            document.getElementById('progress-bar').style.width = ((index + 1) / liste.length * 100) + "%";
 
-            // Vérifier si favori
-            const estFav = favoris.some(f => f.arabe === motActuel.arabe);
+            // Favori
+            const estFav = favoris.some(f => f.arabe === mot.arabe);
             document.getElementById('fav-icon').classList.toggle('active', estFav);
         }
 
@@ -140,54 +172,25 @@
             MAJ();
         }
 
-        // --- CONCEPT 2: ALGORITHME DE MÉLANGE ---
         function melanger() {
             liste.sort(() => Math.random() - 0.5);
             index = 0;
             MAJ();
         }
 
-        function toggleFavori(e) {
-            e.stopPropagation();
-            const motActuel = liste[index];
-            const favIndex = favoris.findIndex(f => f.arabe === motActuel.arabe);
-            
-            if (favIndex > -1) favoris.splice(favIndex, 1);
-            else favoris.push(motActuel);
-            
-            localStorage.setItem('favoris', JSON.stringify(favoris));
-            MAJ();
-        }
-
-        function filtrer() {
-            const s = document.getElementById('recherche').value.toLowerCase();
-            liste = dictionnaireGeant.filter(m => m.francais.toLowerCase().includes(s) || m.arabe.includes(s));
-            index = 0;
-            MAJ();
-        }
-
-        // --- CONCEPT 3: ÉVÉNEMENTS TACTILES (SWIPE) ---
-        let touchStartX = 0;
-        document.getElementById('touch-zone').addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
+        // Swipe
+        let startX = 0;
+        document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('touch-zone').addEventListener('touchend', e => {
-            let touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) change(1); // Swipe gauche -> Suivant
-            if (touchEndX > touchStartX + 50) change(-1); // Swipe droite -> Précédent
+            let endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) change(1);
+            if (endX - startX > 50) change(-1);
         });
 
         function ecouter(e) {
             e.stopPropagation();
-            const text = liste[index].arabe;
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ar&client=tw-ob`;
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(liste[index].arabe)}&tl=ar&client=tw-ob`;
             new Audio(url).play();
-        }
-
-        function toggleTheme() {
-            const b = document.body;
-            b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         }
 
         window.onload = charger;
