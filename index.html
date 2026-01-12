@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Arabe Premium</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0f1a">
     
     <style>
         :root {
@@ -37,6 +38,15 @@
             touch-action: none;
         }
 
+        /* Boutons du haut */
+        .info-switch {
+            position: absolute; top: 15px; left: 15px;
+            width: 45px; height: 45px; border-radius: 12px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; z-index: 100;
+        }
+
         .theme-switch {
             position: absolute; top: 15px; right: 15px;
             width: 45px; height: 45px; border-radius: 12px;
@@ -45,6 +55,7 @@
             cursor: pointer; font-size: 20px; z-index: 100;
         }
 
+        /* En-tête */
         .header-nav { width: 100%; max-width: 400px; margin-top: 10px; }
         .progress-bar-bg { height: 4px; background: rgba(128,128,128,0.2); border-radius: 10px; }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: 0.5s; }
@@ -56,6 +67,7 @@
             box-sizing: border-box; outline: none; margin-top: 15px;
         }
 
+        /* Carte Adaptative */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
             height: 55vh; min-height: 320px; margin: 10px 0; 
@@ -79,6 +91,7 @@
         .arabic { font-size: clamp(40px, 14vw, 80px); font-weight: 800; color: var(--accent); text-align: center; }
         .translation { font-size: clamp(28px, 9vw, 40px); font-weight: 700; text-align: center; }
 
+        /* Bas de page */
         .bottom-section {
             width: 100%; max-width: 400px;
             display: flex; flex-direction: column; align-items: center;
@@ -101,15 +114,48 @@
             letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
             transition: 0.3s; display: flex; align-items: center; gap: 8px;
         }
-        .btn-mix:active { background: var(--accent); color: #000; transform: scale(0.95); }
 
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
+
+        /* Style Guide/Modal */
+        .modal {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-front);
+            margin: 15% auto; padding: 30px;
+            border: 1px solid var(--accent); border-radius: 30px;
+            width: 80%; max-width: 400px; text-align: center;
+            color: var(--text-main); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .close { position: absolute; top: 15px; right: 20px; color: var(--accent); font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body data-theme="dark">
 
+    <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
     <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
+
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleInfo()">&times;</span>
+            <h2 style="color: var(--accent)">Guide Premium</h2>
+            <ul style="text-align: left; line-height: 1.8; font-size: 15px;">
+                <li>🔄 <b>Retourner :</b> Appuyez sur la carte.</li>
+                <li>👉 <b>Naviguer :</b> Glissez (Swipe) ou flèches.</li>
+                <li>🔀 <b>Mélanger :</b> Bouton MIX.</li>
+                <li>❤️ <b>Favoris :</b> Touchez le petit cœur.</li>
+                <li>✈️ <b>Offline :</b> Fonctionne sans internet.</li>
+            </ul>
+            <p style="font-size: 11px; opacity: 0.6; margin-top: 20px;">ARABE PREMIUM v1.0</p>
+        </div>
+    </div>
 
     <div class="header-nav">
         <div class="progress-bar-bg"><div id="progress-bar"></div></div>
@@ -132,7 +178,7 @@
         <div id="count">0 / 0</div>
         <div class="controls">
             <button class="btn-circle" onclick="change(-1)">⬅️</button>
-            <button class="btn-mix" onclick="melanger()">🔀 MIX</button>
+            <button class="btn-mix" onclick="melanger()">MIX</button>
             <button class="btn-circle" onclick="change(1)">➡️</button>
         </div>
     </div>
@@ -140,11 +186,11 @@
     <script src="donnees.js"></script>
 
     <script>
-        // --- GESTION DU SERVICE WORKER (MODE HORS-LIGNE) ---
+        // --- SERVICE WORKER (HORS-LIGNE) ---
         if ('serviceWorker' in navigator) {
             const version = new Date().getTime(); 
             navigator.serviceWorker.register('sw.js?v=' + version)
-                .then(() => console.log("Application prête pour le mode hors-ligne !"))
+                .then(() => console.log("Prêt pour le mode déconnecté"))
                 .catch(err => console.log("Erreur SW:", err));
         }
 
@@ -172,7 +218,11 @@
         }
 
         function tourner() { document.getElementById('card').classList.toggle('flipped'); }
-        function change(dir) { index = (index + dir + liste.length) % liste.length; MAJ(); }
+        
+        function change(dir) { 
+            index = (index + dir + liste.length) % liste.length; 
+            MAJ(); 
+        }
         
         function melanger() { 
             liste.sort(() => Math.random() - 0.5); 
@@ -196,6 +246,12 @@
             const isDark = body.getAttribute('data-theme') === 'dark';
             body.setAttribute('data-theme', isDark ? 'light' : 'dark');
             icon.textContent = isDark ? '☀️' : '🌙';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#f8f9fa' : '#0a0f1a');
+        }
+
+        function toggleInfo() {
+            const modal = document.getElementById('info-modal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
         }
 
         function filtrer() {
@@ -205,6 +261,7 @@
             MAJ();
         }
 
+        // Swipe Tactile
         let startX = 0;
         document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('touch-zone').addEventListener('touchend', e => {
