@@ -34,42 +34,44 @@
             color: var(--text-main); 
             display: flex; flex-direction: column; align-items: center; 
             justify-content: space-between;
-            padding: 10px 15px; box-sizing: border-box;
+            padding: 0 15px 30px 15px; /* On ajuste les marges */
+            box-sizing: border-box;
             touch-action: none;
         }
 
-        /* Boutons de navigation haute */
-        .info-switch {
-            position: absolute; top: 15px; left: 15px;
-            width: 45px; height: 45px; border-radius: 12px;
-            background: var(--input-bg); border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 20px; z-index: 100;
+        /* Barre de progression tout en haut */
+        .progress-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+            background: rgba(128,128,128,0.1); z-index: 1001;
+        }
+        #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: 0.5s; }
+
+        /* Barre d'outils alignée (Nouveau !) */
+        .header-nav { 
+            width: 100%; max-width: 400px; 
+            display: flex; align-items: center; gap: 10px; 
+            margin-top: 15px; /* Un peu d'air par rapport au haut */
+            z-index: 100;
         }
 
-        .theme-switch {
-            position: absolute; top: 15px; right: 15px;
-            width: 45px; height: 45px; border-radius: 12px;
+        .info-switch, .theme-switch {
+            width: 45px; height: 45px; min-width: 45px; border-radius: 12px;
             background: var(--input-bg); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 20px; z-index: 100;
+            cursor: pointer; font-size: 20px;
         }
-
-        .header-nav { width: 100%; max-width: 400px; margin-top: 10px; }
-        .progress-bar-bg { height: 4px; background: rgba(128,128,128,0.2); border-radius: 10px; }
-        #progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: 0.5s; }
 
         #recherche {
-            width: 100%; max-width: 400px; padding: 12px 15px; 
-            background: var(--input-bg); border: 1px solid var(--border);
+            flex-grow: 1; /* Prend toute la place restante */
+            padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 12px; color: var(--text-main); font-size: 16px;
-            box-sizing: border-box; outline: none; margin-top: 15px;
+            outline: none; box-sizing: border-box;
         }
 
         /* Conteneur de la Carte */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
-            height: 55vh; min-height: 320px; margin: 10px 0; 
+            height: 52vh; min-height: 300px; margin: 10px 0; 
         }
         
         #card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -85,22 +87,16 @@
         }
 
         .front { background: var(--card-front); }
-        
-        /* Corrigé : La face arrière suit maintenant le thème */
-        .back { 
-            background: var(--card-front); 
-            color: var(--text-main); 
-            transform: rotateY(180deg); 
-        }
+        .back { background: var(--card-front); color: var(--text-main); transform: rotateY(180deg); }
 
         .arabic { font-size: clamp(40px, 14vw, 80px); font-weight: 800; color: var(--accent); text-align: center; }
         .translation { font-size: clamp(28px, 9vw, 40px); font-weight: 700; text-align: center; }
 
-        /* Section Basse */
+        /* Bas de page */
         .bottom-section {
             width: 100%; max-width: 400px;
             display: flex; flex-direction: column; align-items: center;
-            gap: 20px; padding-bottom: 30px;
+            gap: 15px;
         }
 
         .controls { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 320px; }
@@ -113,58 +109,44 @@
         }
 
         .btn-mix {
-            padding: 10px 20px; border-radius: 30px;
+            padding: 12px 25px; border-radius: 30px;
             background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent);
             color: var(--accent); font-size: 13px; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-            transition: 0.3s;
         }
 
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .fav-badge { position: absolute; top: 20px; right: 20px; font-size: 26px; cursor: pointer; z-index: 10; }
 
-        /* Modal Guide */
-        .modal {
-            display: none; position: fixed; z-index: 1000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: var(--card-front);
-            margin: 15% auto; padding: 30px;
-            border: 1px solid var(--accent); border-radius: 30px;
-            width: 80%; max-width: 400px; text-align: center;
-            color: var(--text-main); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .close { position: absolute; top: 15px; right: 20px; color: var(--accent); font-size: 28px; font-weight: bold; cursor: pointer; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-front); margin: 20% auto; padding: 30px; border: 1px solid var(--accent); border-radius: 30px; width: 80%; max-width: 400px; text-align: center; color: var(--text-main); position: relative; }
+        .close { position: absolute; top: 15px; right: 20px; color: var(--accent); font-size: 28px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
-    <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <div class="header-nav">
+        <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
+        <input type="text" id="recherche" placeholder="Chercher..." oninput="filtrer()">
+        <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
+    </div>
 
     <div id="info-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="toggleInfo()">&times;</span>
             <h2 style="color: var(--accent)">Guide Premium</h2>
             <ul style="text-align: left; line-height: 1.8; font-size: 15px;">
-                <li>🔄 <b>Retourner :</b> Touchez la carte.</li>
+                <li>🔄 <b>Retourner :</b> Appuyez sur la carte.</li>
                 <li>👉 <b>Naviguer :</b> Glissez (Swipe) ou flèches.</li>
                 <li>🔀 <b>Mélanger :</b> Bouton MIX.</li>
                 <li>❤️ <b>Favoris :</b> Prioritaires au démarrage.</li>
-                <li>✈️ <b>Offline :</b> Fonctionne sans internet.</li>
             </ul>
-            <p style="font-size: 11px; opacity: 0.6; margin-top: 20px;">ARABE PREMIUM v1.1</p>
         </div>
-    </div>
-
-    <div class="header-nav">
-        <div class="progress-bar-bg"><div id="progress-bar"></div></div>
-        <input type="text" id="recherche" placeholder="Rechercher un mot..." oninput="filtrer()">
     </div>
 
     <div class="card-container" id="touch-zone">
@@ -191,54 +173,38 @@
     <script src="donnees.js"></script>
 
     <script>
-        // --- 1. SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             const version = new Date().getTime(); 
             navigator.serviceWorker.register('sw.js?v=' + version);
         }
 
-        // --- 2. THÈME INTELLIGENT ---
         const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
 
         function appliquerTheme() {
             const choixManuel = localStorage.getItem('theme');
-            let themeFinal = 'dark';
-            if (choixManuel) themeFinal = choixManuel;
-            else if (prefSystemeSombre.matches) themeFinal = 'dark';
-            else themeFinal = 'light';
-
+            let themeFinal = choixManuel || (prefSystemeSombre.matches ? 'dark' : 'light');
             document.body.setAttribute('data-theme', themeFinal);
             document.getElementById('theme-icon').textContent = (themeFinal === 'dark') ? '🌙' : '☀️';
             document.querySelector('meta[name="theme-color"]').setAttribute('content', (themeFinal === 'dark') ? '#0a0f1a' : '#f8f9fa');
         }
 
         function toggleTheme() {
-            const actuel = document.body.getAttribute('data-theme');
-            const nouveau = (actuel === 'dark') ? 'light' : 'dark';
+            const nouveau = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', nouveau);
             appliquerTheme();
         }
 
-        // --- 3. LOGIQUE DE L'APPLICATION ---
-        let index = 0;
-        let liste = [];
+        let index = 0; let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
 
         function charger() {
             if (typeof dictionnaireGeant !== 'undefined') {
-                // Sépare les favoris du reste
                 let lesFavoris = dictionnaireGeant.filter(m => favoris.some(f => f.arabe === m.arabe));
                 let leReste = dictionnaireGeant.filter(m => !favoris.some(f => f.arabe === m.arabe));
-
-                // Mélange les deux groupes séparément
                 lesFavoris.sort(() => Math.random() - 0.5);
                 leReste.sort(() => Math.random() - 0.5);
-
-                // Fusionne : Favoris d'abord, puis le reste
                 liste = [...lesFavoris, ...leReste];
-                
-                index = 0;
-                MAJ();
+                index = 0; MAJ();
             }
         }
 
@@ -250,19 +216,13 @@
             document.getElementById('fr').textContent = mot.francais;
             document.getElementById('count').textContent = (index + 1) + " / " + liste.length;
             document.getElementById('progress-bar').style.width = ((index + 1) / liste.length * 100) + "%";
-            
             const estFav = favoris.some(f => f.arabe === mot.arabe);
             document.getElementById('fav-icon').textContent = estFav ? "❤️" : "🤍";
         }
 
         function tourner() { document.getElementById('card').classList.toggle('flipped'); }
         function change(dir) { index = (index + dir + liste.length) % liste.length; MAJ(); }
-        
-        function melanger() { 
-            liste.sort(() => Math.random() - 0.5); 
-            index = 0; 
-            MAJ(); 
-        }
+        function melanger() { liste.sort(() => Math.random() - 0.5); index = 0; MAJ(); }
         
         function toggleFavori(e) {
             e.stopPropagation();
@@ -275,18 +235,16 @@
         }
 
         function toggleInfo() {
-            const modal = document.getElementById('info-modal');
-            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+            const m = document.getElementById('info-modal');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
         }
 
         function filtrer() {
             const s = document.getElementById('recherche').value.toLowerCase();
             liste = dictionnaireGeant.filter(m => m.francais.toLowerCase().includes(s) || m.arabe.includes(s));
-            index = 0;
-            MAJ();
+            index = 0; MAJ();
         }
 
-        // Swipe Tactile
         let startX = 0;
         document.getElementById('touch-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('touch-zone').addEventListener('touchend', e => {
@@ -295,10 +253,7 @@
             if (endX - startX > 50) change(-1);
         });
 
-        window.onload = function() {
-            appliquerTheme();
-            charger();
-        };
+        window.onload = function() { appliquerTheme(); charger(); };
     </script>
 </body>
 </html>
