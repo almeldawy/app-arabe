@@ -38,7 +38,6 @@
             touch-action: none;
         }
 
-        /* Boutons du haut */
         .info-switch {
             position: absolute; top: 15px; left: 15px;
             width: 45px; height: 45px; border-radius: 12px;
@@ -55,7 +54,6 @@
             cursor: pointer; font-size: 20px; z-index: 100;
         }
 
-        /* En-tête */
         .header-nav { width: 100%; max-width: 400px; margin-top: 10px; }
         .progress-bar-bg { height: 4px; background: rgba(128,128,128,0.2); border-radius: 10px; }
         #progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: 0.5s; }
@@ -67,7 +65,6 @@
             box-sizing: border-box; outline: none; margin-top: 15px;
         }
 
-        /* Carte Adaptative */
         .card-container { 
             perspective: 2000px; width: 100%; max-width: 340px; 
             height: 55vh; min-height: 320px; margin: 10px 0; 
@@ -91,7 +88,6 @@
         .arabic { font-size: clamp(40px, 14vw, 80px); font-weight: 800; color: var(--accent); text-align: center; }
         .translation { font-size: clamp(28px, 9vw, 40px); font-weight: 700; text-align: center; }
 
-        /* Bas de page */
         .bottom-section {
             width: 100%; max-width: 400px;
             display: flex; flex-direction: column; align-items: center;
@@ -112,7 +108,7 @@
             background: rgba(251, 191, 36, 0.1); border: 1px solid var(--accent);
             color: var(--accent); font-size: 13px; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            transition: 0.3s;
         }
 
         #count { font-size: 14px; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
@@ -137,7 +133,7 @@
         .close { position: absolute; top: 15px; right: 20px; color: var(--accent); font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
-<body data-theme="dark">
+<body>
 
     <div class="info-switch" onclick="toggleInfo()">ℹ️</div>
     <div class="theme-switch" onclick="toggleTheme()" id="theme-icon">🌙</div>
@@ -186,14 +182,42 @@
     <script src="donnees.js"></script>
 
     <script>
-        // --- SERVICE WORKER (HORS-LIGNE) ---
+        // --- 1. GESTION DU SERVICE WORKER (OFFLINE) ---
         if ('serviceWorker' in navigator) {
             const version = new Date().getTime(); 
             navigator.serviceWorker.register('sw.js?v=' + version)
-                .then(() => console.log("Prêt pour le mode déconnecté"))
-                .catch(err => console.log("Erreur SW:", err));
+                .then(() => console.log("SW OK"));
         }
 
+        // --- 2. GESTION DU THÈME INTELLIGENT ---
+        const prefSystemeSombre = window.matchMedia('(prefers-color-scheme: dark)');
+
+        function appliquerTheme() {
+            const choixManuel = localStorage.getItem('theme');
+            let themeFinal = 'dark'; // Par défaut
+
+            if (choixManuel) {
+                themeFinal = choixManuel;
+            } else if (prefSystemeSombre.matches) {
+                themeFinal = 'dark';
+            } else {
+                themeFinal = 'light';
+            }
+
+            document.body.setAttribute('data-theme', themeFinal);
+            document.getElementById('theme-icon').textContent = (themeFinal === 'dark') ? '🌙' : '☀️';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', (themeFinal === 'dark') ? '#0a0f1a' : '#f8f9fa');
+        }
+
+        function toggleTheme() {
+            const actuel = document.body.getAttribute('data-theme');
+            const nouveau = (actuel === 'dark') ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', nouveau);
+            localStorage.setItem('theme', nouveau);
+            appliquerTheme();
+        }
+
+        // --- 3. LOGIQUE DE L'APPLICATION ---
         let index = 0;
         let liste = [];
         let favoris = JSON.parse(localStorage.getItem('favoris')) || [];
@@ -218,17 +242,8 @@
         }
 
         function tourner() { document.getElementById('card').classList.toggle('flipped'); }
-        
-        function change(dir) { 
-            index = (index + dir + liste.length) % liste.length; 
-            MAJ(); 
-        }
-        
-        function melanger() { 
-            liste.sort(() => Math.random() - 0.5); 
-            index = 0; 
-            MAJ(); 
-        }
+        function change(dir) { index = (index + dir + liste.length) % liste.length; MAJ(); }
+        function melanger() { liste.sort(() => Math.random() - 0.5); index = 0; MAJ(); }
         
         function toggleFavori(e) {
             e.stopPropagation();
@@ -238,15 +253,6 @@
             else favoris.push(motActuel);
             localStorage.setItem('favoris', JSON.stringify(favoris));
             MAJ();
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            icon.textContent = isDark ? '☀️' : '🌙';
-            document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#f8f9fa' : '#0a0f1a');
         }
 
         function toggleInfo() {
@@ -270,7 +276,10 @@
             if (endX - startX > 50) change(-1);
         });
 
-        window.onload = charger;
+        window.onload = function() {
+            charger();
+            appliquerTheme();
+        };
     </script>
 </body>
 </html>
