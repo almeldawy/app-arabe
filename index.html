@@ -176,11 +176,14 @@
 
     <script src="donnees.js"></script>
     <script>
-        // --- GESTION DU SERVICE WORKER & CACHE ---
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
-            navigator.serviceWorker.register('sw.js?v=' + Date.now());
-        }
+    // Enregistrement du Service Worker pour le mode Hors-ligne
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Mode hors-ligne prêt !'))
+            .catch(err => console.log('Erreur SW:', err));
+        });
+    }
 
         // --- THEME ---
         function appliquerTheme() {
