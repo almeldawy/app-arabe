@@ -1,50 +1,40 @@
-// On génère un nom de cache unique basé sur le temps
-// Cela permet de forcer le renouvellement des fichiers
-const VERSION = new Date().getTime();
-const CACHE_NAME = `arabe-premium-v-${VERSION}`;
-
+const CACHE_NAME = 'arabe-premium-v1';
 const ASSETS = [
   './',
   './index.html',
   './donnees.js',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// 1. INSTALLATION : On télécharge les fichiers dans le cache
-self.addEventListener('install', (event) => {
-  // skipWaiting() force le nouveau service worker à s'activer sans attendre
-  self.skipWaiting();
-  event.waitUntil(
+// Installation : on met les fichiers dans le cache
+self.addEventListener('install', (e) => {
+  e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('SW: Mise en cache des fichiers');
       return cache.addAll(ASSETS);
     })
   );
 });
 
-// 2. ACTIVATION : On supprime les anciens caches pour libérer de l'espace
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
+// Activation : on nettoie les vieux caches si besoin
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          // Si le nom du cache est différent du nouveau, on l'efface
-          if (cacheName !== CACHE_NAME) {
-            console.log('SW: Suppression de l\'ancien cache', cacheName);
-            return caches.delete(cacheName);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
   );
 });
 
-// 3. RÉPONSE AUX REQUÊTES : Stratégie "Cache First"
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // On rend le fichier du cache s'il existe, sinon on va sur le réseau
-      return response || fetch(event.request);
+// Récupération : on sert les fichiers du cache même sans internet
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => {
+      return response || fetch(e.request);
     })
   );
 });
