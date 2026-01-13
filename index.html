@@ -176,13 +176,11 @@
 
     <script src="donnees.js"></script>
     <script>
-    // Enregistrement du Service Worker pour le mode Hors-ligne
+   // Enregistrement du Service Worker
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Mode hors-ligne prêt !'))
-            .catch(err => console.log('Erreur SW:', err));
-        });
+        navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log("SW Enregistré"))
+        .catch(err => console.log("Erreur SW:", err));
     }
 
         // --- THEME ---
