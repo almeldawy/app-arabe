@@ -1,4 +1,4 @@
-const CACHE_NAME = 'arabe-v4'; // On change le nom pour forcer le refresh
+const CACHE_NAME = 'arabe-v5'; // On change le nom pour forcer le refresh
 
 // On ne met que le strict minimum pour que ça ne plante pas
 const ASSETS = [
